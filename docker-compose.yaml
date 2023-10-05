@@ -1,0 +1,58 @@
+# SPDX-License-Identifier: MIT
+
+version: '3'
+
+# This is the docker-compose file for the hello-world cross compilation.
+# Here we define three services, one for each architecture. Each has a `build`
+# section that defines the context, the dockerfile, and the platform. This is
+# used by docker-compose to build the image for each architecture. While the
+# context and dockerfile are the same for each service, the platform is
+# difference.
+#
+# The `volumes` section is used to mount the current directory into the
+# container. This is used to copy the source code into the container. We then
+# set the working directory to that volume in the container.
+#
+# The `command` section is used to run the `make` command in the container.
+#
+# The `docker-compose` utility can be used to run a variety of subtasks. For
+# example, `docker-compose build hello-world-x86` will build the image for
+# the hello-world-x86 service and nothing more. In this case we want to build
+# then start the service (this executes the command). To do this the following
+# command is used:
+#
+# `docker-compose up`
+
+
+services:
+  hello-world-x86:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      platforms: [linux/amd64]
+    volumes:
+      - ./:/work
+    working_dir: /work
+    command: make
+
+  hello-world-arm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      platforms: [linux/arm64]
+    volumes:
+      - ./:/work
+    working_dir: /work
+    platform: linux/arm64
+    command: make
+
+  hello-world-riscv:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      platforms: [linux/riscv64]
+    volumes:
+      - ./:/work
+    working_dir: /work
+    platform: linux/riscv64
+    command: make
